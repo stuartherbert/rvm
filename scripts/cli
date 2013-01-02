@@ -1067,22 +1067,24 @@ To reinstall use:
             [[ $(find $rvm_rubies_path -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l) -eq 0 ]] &&
             rvm_is_a_shell_function no_warning
           then
-            {
-              if [[ -t 1 ]]
-              then
+            if [[ -t 1 ]]
+            then
+              {
                 echo "Ruby (and needed base gems) for your selection will be installed shortly."
                 echo "Before it happens, please read and execute the instructions below."
                 echo "Please use a separate terminal to execute any additional commands."
                 echo "(use keyboard arrows to navigate)"
                 "$rvm_scripts_path"/requirements
                 echo "Press 'q' to continue."
-              else
+              } | less
+            else
+              {
                 echo "Ruby (and needed base gems) for your selection will now be installed."
                 echo "If you encounter any problems, please read and execute the instructions"
                 echo "below before trying again."
                 "$rvm_scripts_path"/requirements
-              fi
-            } | rvm_less
+	 		  } | cat
+			fi
           fi
           __rvm_manage_wrapper install "${rvm_ruby_strings}"
         fi
@@ -1173,13 +1175,4 @@ To reinstall use:
   fi
 
   return ${result:-0}
-}
-
-# deal with things when we're not running interactively
-rvm_less() {
-  if [[ -t 1 ]] ; then
-    less
-  else
-    cat
-  fi
 }
